@@ -1,0 +1,8 @@
+# Dossier contenant les fichiers traces issu de session WireShark privee
+traceprivee
+
+# sujet du projet
+sujet.pdf
+
+# python
+__pycache__
