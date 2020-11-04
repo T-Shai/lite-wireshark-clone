@@ -6,6 +6,12 @@ Analyseur de Protocoles Réseau ‘Offline’
 
 ### Structure du projet
 
+- #### main.py
+    
+    - Fichier script
+    - Recupere le chemin/nom du fichier et execute le programme
+    - Gestion du mode developpeur en developpement
+    
 - #### traceparser.py :
     
     - Lis le fichier trace d'entrée
