@@ -10,7 +10,6 @@
 """
 
 import os
-import struct
 
 # import interne
 from utils import estHex
@@ -58,6 +57,7 @@ def extraireTrames(lignes: list()):
         lignes_utiles.append((lu, nligneSource))
     
     # Vérification du formatage des octets
+    aTraiter = list()
     nLigneTotal = len(lignes_utiles)
     for nLigneUtile in range(nLigneTotal):
 
@@ -73,10 +73,19 @@ def extraireTrames(lignes: list()):
             # Taille actuelle de la ligne en nombre d'octet
             tailleCourant = len(lignes_utiles[nLigneUtile][0]) - 1
 
-            # Les tailles ne concordent pas
-            if tailleAnnoncee != tailleCourant:
+            # La tailles annoncée est trop grande (perte d'information)
+            if tailleAnnoncee > tailleCourant:
                 raise SyntaxeErreur(
                     f"\n\nLigne {lignes_utiles[nLigneUtile][1]} : taille des octets de la ligne différents de la taille annoncée par les offsets \nTaille annoncé : {tailleAnnoncee}\t Taille réelle : {tailleCourant}")
+
+            # la taille annoncée est plsu petite (surplus d'information à supprimer)
+            if tailleAnnoncee < tailleCourant:
+                # ligne à raccourcir
+                aTraiter.append((nLigneUtile, tailleCourant - tailleAnnoncee))
+    
+    for nligne, surplus in aTraiter:
+        # Supression des hex en trop à la fin  de la ligne
+        lignes_utiles[nligne] = (lignes_utiles[nligne][0][:len(lignes_utiles[nligne])-surplus-2], lignes_utiles[1])
 
     # Liste contenant les différents trames extraits
     trames = list()
