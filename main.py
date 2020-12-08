@@ -4,14 +4,13 @@
 
     main.py
 
-    Fichier script permettant l'execution du programme
+    test / point d'entree
 """
 # traceparser : récupération des trames via un fichier trace txt (hex dump de Wireshark)
 from traceparser import lectureOctets
 
-# ethernet : affichage des entêtes ethernet
-from ethernet import trameEthernet
- 
+from core import ProtocolAnalyser
+
 import os # pour la recuperation des arguments terminales
 
 # Point d'entree du programme
@@ -20,12 +19,14 @@ def main(args : list):
     if largs != 2:
         print(\
 f"""
-Usage : 
+Utilisation : 
     {args[0]} <chemain/nom du fichier trace>
 """)
-    for trame in lectureOctets(args[1]):
-        print(trame[:20])
-        trameEthernet(trame)
+        exit(1)
+    
+    pa = ProtocolAnalyser(args[1])
+    print(pa.analyse()[0])
+        
     
 if __name__ == "__main__":
     _DEBUG = True

@@ -15,7 +15,11 @@ def formatageMac(mac: list):
 
         Format les octets en format adresse mac
     """
-    return ":".join(mac)
+    strMacAdrr =  ":".join(mac)
+    if strMacAdrr.lower() == "ff:ff:ff:ff:ff:ff":
+        strMacAdrr += " (Broadcast)"
+    
+    return strMacAdrr
 
 
 
@@ -27,33 +31,33 @@ def etherType(data: list):
     """
     HexEType = "".join(data)
     strType = "INCONNU"
+    estIPV4 = False
     if HexEType.lower() == "0800":
         strType = "IPV4"
+        estIPV4 = True
     elif HexEType.lower() == "0806":
         strType = "ARP REQUEST/RESPONSE"
     elif HexEType.lower() == "86dd":
         strType = "IPV6"
 
-    return f"Type Ethernet :\t\t\t{strType} (0x{HexEType})"
+    return f"Type Ethernet :\t\t\t{strType} (0x{HexEType})", estIPV4
 
 
 def trameEthernet(data: list):
     """
-        trameEthernet(list[str]) -> list[str]
+        trameEthernet(list[str]) -> list[str], str, bool
 
-        Affiche l'entete Ethernet
-
-        Retourne la trame privee des 14 premiers bits
+        Retourne la trame privee des 14 premiers bits et un string de retour
     """
-
+    strOut = "\nEthernet :\n"
     # destination (6 bytes)
     destMac = "Destination (Adresse MAC) :\t" + formatageMac(data[:6])
-    print(destMac)
+    strOut += destMac+"\n"
     # source (6 bytes)
     srcMac = "Source (Adresse MAC) :\t\t"+formatageMac(data[6:12])
-    print(srcMac)
+    strOut += srcMac+"\n"
     # type (2 bytes)
-    eType = etherType(data[12:14])
-    print(eType)
+    eType, estIPV4 = etherType(data[12:14])
+    strOut += eType+"\n"
 
-    return data[14:]
+    return data[14:], strOut, estIPV4
