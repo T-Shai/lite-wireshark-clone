@@ -145,6 +145,5 @@ def lectureOctets(nomFichier: str):
         print(
             f"FichierNonTrouverErreur : Le fichier {nomFichier} est inexistant ou n'est pas dans le repertoire du programme.", file=os.sys.stderr)
         os.sys.exit(1)
-
     return extraireTrames(lignes)
 

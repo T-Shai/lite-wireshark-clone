@@ -29,8 +29,6 @@ def trameTCP(data : list, strOut : str) -> (list, str, bool):
     """
     source = int("".join(data[0:2]),16)
     desti = int("".join(data[2:4]),16)
-    
-    estHTTP = (desti == 80)
 
     sequence_number = int("".join(data[4:8]),16)
     ack_number = int("".join(data[8:12]),16)
@@ -71,7 +69,7 @@ Urgent pointer  : {urg_ptr}
 
 """
     strOut += s
-    return data[20:], strOut, estHTTP
+    return data[20:], strOut
     # print(source, desti, sequence_number, ack_number, header_length, flags, bflag)
     # print(reserved, urg, ack, psh, rst, syn, fin)
     # print(win_size_value, checksum, urg_ptr)

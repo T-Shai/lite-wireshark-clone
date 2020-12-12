@@ -84,7 +84,7 @@ def trameIpv4(trame : list, strOut : str) ->(list, str, bool):
 Version         :  {version}
 Header Length   :  {header_length}
 TOS             :  {tos}
-Total Length    :  {header_length}
+Total Length    :  {total_length}
 Identification  :  {identification}
 
 Flags           : {flags}

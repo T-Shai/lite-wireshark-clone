@@ -12,6 +12,7 @@ from traceparser import lectureOctets   # Lecture des octets depuis un fichier
 from ethernet import trameEthernet      # Recuperation des trames ethernets
 from ipv4 import trameIpv4
 from tcp import trameTCP
+from http1 import trameHTTP1
 
 class ProtocolAnalyser:
     """
@@ -20,7 +21,7 @@ class ProtocolAnalyser:
         En utilisant les différents fonctions d'analyse
     """
     END = "\nTRAME ANALYSEE\n"
-    SEPARATOR = "-"*60
+    SEPARATOR = "\t"*6
     def __init__(self, nomFichier : str):
         """
             ProtocolAnalyser(nomFichier : str) -> ProtocolAnalyser Object
@@ -44,6 +45,7 @@ class ProtocolAnalyser:
         for numTrame, trame in enumerate(self.trames):
             # Analyse de la trame ethernet
             trame, strOut, estIPV4 = trameEthernet(trame)
+            strOut().replace("\n", "\n\t")
             # on verifie que la trame ip est bien de la
             # version 4
             if not estIPV4:
@@ -59,11 +61,9 @@ class ProtocolAnalyser:
                     continue    # passage a la prochaine trame
                 else:
                     strOut += ProtocolAnalyser.SEPARATOR
-                    trame, strOut, estHTTP1 = trameTCP(trame, strOut)
-                    if not estHTTP1:
-                        strOut += "Seul HTTP1 est implémentée :("+ProtocolAnalyser.END
-                    else:
-                        pass
-                        # TODO HTTP1
+                    trame, strOut = trameTCP(trame, strOut)
+
+                    strOut += ProtocolAnalyser.SEPARATOR
+                    trame, strOut, estHTTP1 = trameHTTP1(trame, strOut)
             strOuts.append(strOut)
         return strOuts
