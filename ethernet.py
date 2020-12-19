@@ -40,7 +40,7 @@ def etherType(data: list):
     elif HexEType.lower() == "86dd":
         strType = "IPV6"
 
-    return f"Type Ethernet :\t\t\t{strType} (0x{HexEType})", estIPV4
+    return f"Type Ethernet :\t\t{strType} (0x{HexEType})", estIPV4
 
 
 def trameEthernet(data: list):
@@ -61,3 +61,20 @@ def trameEthernet(data: list):
     strOut += eType+"\n"
 
     return data[14:], strOut, estIPV4
+
+def trameEthernetG(data: list):
+    """
+        trameEthernetG(list[str]) -> list[str], str, bool
+
+        Version graphique
+        Retourne la trame privee des 14 premiers bits et un string de retour
+    """
+    
+    # destination (6 bytes)
+    destMac = "Destination (Adresse MAC) :\t" + formatageMac(data[:6])
+    # source (6 bytes)
+    srcMac = "Source (Adresse MAC) :\t\t"+formatageMac(data[6:12])
+    # type (2 bytes)
+    eType, estIPV4 = etherType(data[12:14])
+
+    return data[14:], [destMac, srcMac, eType] , estIPV4

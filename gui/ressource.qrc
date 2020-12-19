@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="img">
+    <file>branch-closed.png</file>
+    <file>branch-open.png</file>
+    <file>lg.ico</file>
+  </qresource>
+</RCC>

@@ -21,7 +21,7 @@ class ProtocolAnalyser:
         En utilisant les différents fonctions d'analyse
     """
     END = "\nTRAME ANALYSEE\n"
-    SEPARATOR = "\t"*6
+    SEPARATOR = "--"*6+"\n\t"
     def __init__(self, nomFichier : str):
         """
             ProtocolAnalyser(nomFichier : str) -> ProtocolAnalyser Object
@@ -45,7 +45,7 @@ class ProtocolAnalyser:
         for numTrame, trame in enumerate(self.trames):
             # Analyse de la trame ethernet
             trame, strOut, estIPV4 = trameEthernet(trame)
-            strOut().replace("\n", "\n\t")
+            strOut.replace("\n", "\n\t")
             # on verifie que la trame ip est bien de la
             # version 4
             if not estIPV4:

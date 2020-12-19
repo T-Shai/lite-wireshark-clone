@@ -70,6 +70,48 @@ Urgent pointer  : {urg_ptr}
 """
     strOut += s
     return data[20:], strOut
+
+def trameTCPG(data : list) -> (list, str, bool):
+    """
+
+        trameTCP(list[str], str) -> (list[str], str, bool)
+        
+        VERSION GRAPHIQUE
+        retourne l'analyse de la trame TCP
+    """
+    source = int("".join(data[0:2]),16)
+    desti = int("".join(data[2:4]),16)
+
+    sequence_number = int("".join(data[4:8]),16)
+    ack_number = int("".join(data[8:12]),16)
+
+    n =  int("".join(data[12][0]),16)
+    header_length = f"{4*n} bytes ({n})"
+    flags = "0x"+data[12][1]+"".join(data[13:14])
+    bflag = bin(int(flags, 16))[2:].zfill(12)
+    reserved, urg, ack, psh, rst, syn, fin = getFlags(bflag)
+    win_size_value = int("".join(data[14:16]),16)
+    checksum = "0x"+"".join(data[16:18])
+    urg_ptr = int("".join(data[18:20]), 16)
+    s = [
+        f"Source      : {source}",
+        f"Destination : {desti}",
+        f"Sequence number (raw)       : {sequence_number}",
+        f"Acknowledgment number (raw) : {ack_number}",
+        f"Header Length   : {header_length}",
+        f"Flags           : {flags}",
+        f"            Reserved    : {reserved}",
+        f"            Urgent      : {urg}",
+        f"            Acknowledgment : {ack}",
+        f"            Push        : {psh}",
+        f"            Reset       : {rst}",
+        f"            Syn         : {syn}",
+        f"            Fin         : {fin} ",
+        f"Window size value       : {win_size_value}",
+        f"Cheksum         : {checksum} [unverified]",
+        f"Urgent pointer  : {urg_ptr}"
+        ]
+    return data[20:], s
     # print(source, desti, sequence_number, ack_number, header_length, flags, bflag)
     # print(reserved, urg, ack, psh, rst, syn, fin)
     # print(win_size_value, checksum, urg_ptr)
