@@ -6,43 +6,8 @@
 
     fonctions analyseur IPV4
 """
-def getId(l: list) -> str:
-    """
-        getId(list[str]) -> str
 
-        Representation hex et decimale d'une trame IP 
-    """
-    h = "0x"+"".join(l)
-    i = int(h, 16)
-    return f"{h} ({str(i)})"
-
-def getFlags(l: list) -> list:
-    """
-        getFlags(list[str]) -> list
-
-        retourne une representation textuel
-
-            - les flags en hexa
-            - reserved bit
-            - dont fragement
-            - more fragment
-            - offset
-    """
-    flags = "0x"+"".join(l)
-    n = int(l[0][0])
-    b = bin(n).split("b")[1].zfill(4)[:-1]
-    rb, df, mf = ("Set" if i=="1" else "Not set" for i in b)
-    offset = "0x"+l[0][1]+"".join(l[1])
-    n_offset = int(offset, 16)
-    return flags, rb, df, mf, f"{n_offset} ({offset})"
-
-def formatIP(l):
-    """
-        formatIP(list[str]) -> str
-
-        Formate en representation IP
-    """
-    return ".".join([str(int(i,16)) for i in l])
+from utils import getId, getFlags, formatIP
 
 def trameIpv4(trame : list, strOut : str) ->(list, str, bool):
     """
@@ -54,10 +19,13 @@ def trameIpv4(trame : list, strOut : str) ->(list, str, bool):
     version = trame[0][0]
 
     header_length = str(int(trame[0][1])*4) + f" ({trame[0][1]})"
+    hl = int(trame[0][1])*4
 
     tos = trame[1]
 
+    
     total_length = str(int("".join(trame[2:4]), 16))
+
 
     identification = getId(trame[4:6])
 
@@ -79,6 +47,13 @@ def trameIpv4(trame : list, strOut : str) ->(list, str, bool):
     source = formatIP(trame[12:16])
 
     desti = formatIP(trame[16:20])
+
+    options_padding = trame[20:hl]
+
+    opt = "Cette partie IPV4 ne contient pas d'options !"
+    if options_padding != list():
+
+        opt = "Cette partie IPV4 contient des options et potentionellement du bourrage !"
 
     s=f"""\nIPV4
 Version         :  {version}
@@ -101,9 +76,11 @@ Checksum          : {checksum}
 
 Source            : {source}
 Destination       : {desti}
+
+Options + padding : {opt}
 """
     strOut += s
-    return trame[20:], strOut, isTCP
+    return trame[hl:], strOut, isTCP
 
 def trameIpv4G(trame : list) ->(list, str, bool):
     """
@@ -117,6 +94,7 @@ def trameIpv4G(trame : list) ->(list, str, bool):
     version = trame[0][0]
 
     header_length = str(int(trame[0][1])*4) + f" ({trame[0][1]})"
+    hl = int(trame[0][1])*4
 
     tos = trame[1]
 
@@ -143,6 +121,12 @@ def trameIpv4G(trame : list) ->(list, str, bool):
 
     desti = formatIP(trame[16:20])
 
+    options_padding = trame[20:hl]
+    
+    opt = "Cette partie IPV4 ne contient pas d'options !"
+    if options_padding != list():
+        opt = "Cette partie IPV4 contient des options et potentionellement du bourrage !"
+
     s =[
         f"Version         :   \t{version}",
         f"Header Length   :   \t{header_length}",
@@ -158,7 +142,8 @@ def trameIpv4G(trame : list) ->(list, str, bool):
         f"Protocol          : \t{protocol}",
         f"Checksum          : \t{checksum}",
         f"Source            : \t{source}",
-        f"Destination       : \t{desti}"
+        f"Destination       : \t{desti}",
+        f"options + padding : \t{opt}"
     ]
 
-    return trame[20:], s, isTCP,source, desti
+    return trame[hl:], s, isTCP,source, desti

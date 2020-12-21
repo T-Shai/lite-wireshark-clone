@@ -35,12 +35,19 @@ def trameTCP(data : list, strOut : str) -> (list, str, bool):
 
     n =  int("".join(data[12][0]),16)
     header_length = f"{4*n} bytes ({n})"
+    hl = 4*n
     flags = "0x"+data[12][1]+"".join(data[13:14])
     bflag = bin(int(flags, 16))[2:].zfill(12)
     reserved, urg, ack, psh, rst, syn, fin = getFlags(bflag)
     win_size_value = int("".join(data[14:16]),16)
     checksum = "0x"+"".join(data[16:18])
     urg_ptr = int("".join(data[18:20]), 16)
+    option_padding = data[20:hl]
+
+    opt = "Cette partie tcp ne contient pas d'options !"
+    if option_padding != list():
+
+        opt = "Cette partie tcp contient des options et potentionellement du bourrage !"
     s = f"""\nTCP:
 Source      : {source}
 Destination : {desti}
@@ -67,9 +74,10 @@ Cheksum         : {checksum} [unverified]
 
 Urgent pointer  : {urg_ptr}
 
+Options + bourrages : {opt}
 """
     strOut += s
-    return data[20:], strOut
+    return data[hl:], strOut
 
 def trameTCPG(data : list) -> (list, str, bool):
     """
@@ -87,12 +95,21 @@ def trameTCPG(data : list) -> (list, str, bool):
 
     n =  int("".join(data[12][0]),16)
     header_length = f"{4*n} bytes ({n})"
+    hl = 4*n
     flags = "0x"+data[12][1]+"".join(data[13:14])
     bflag = bin(int(flags, 16))[2:].zfill(12)
     reserved, urg, ack, psh, rst, syn, fin = getFlags(bflag)
     win_size_value = int("".join(data[14:16]),16)
     checksum = "0x"+"".join(data[16:18])
     urg_ptr = int("".join(data[18:20]), 16)
+
+    option_padding = data[20:hl]
+
+    opt = "Cette partie tcp ne contient pas d'options !"
+    if option_padding != list():
+
+        opt = "Cette partie tcp contient des options et potentionellement du bourrage !"
+
     s = [
         f"Source      : {source}",
         f"Destination : {desti}",
@@ -109,9 +126,10 @@ def trameTCPG(data : list) -> (list, str, bool):
         f"            Fin         : {fin} ",
         f"Window size value       : {win_size_value}",
         f"Cheksum         : {checksum} [unverified]",
-        f"Urgent pointer  : {urg_ptr}"
+        f"Urgent pointer  : {urg_ptr}",
+        f"Options + pad   : {opt}"
         ]
-    return data[20:], s
+    return data[hl:], s
     # print(source, desti, sequence_number, ack_number, header_length, flags, bflag)
     # print(reserved, urg, ack, psh, rst, syn, fin)
     # print(win_size_value, checksum, urg_ptr)

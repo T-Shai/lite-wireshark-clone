@@ -65,7 +65,7 @@ Version:    {version}
 
     else:
         # n'est pas http
-        return trame, f"Cette partie n'est pas http/1 ou est encrypté :'(\n Voici quand meme ce qu'on a :\n"+"\n".join(http_decoded), False
+        return trame, strOut+f"\nCette partie n'est pas http/1 ou est encrypté :'(\n Voici quand meme ce qu'on a :\n"+"\n".join(http_decoded), False
     
 def trameHTTP1G(trame : list) -> (list, str, bool):
     """

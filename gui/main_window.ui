@@ -646,7 +646,7 @@ image: url(:/img/branch-open.png)
        <enum>QAbstractScrollArea::AdjustIgnored</enum>
       </property>
       <attribute name="headerVisible">
-       <bool>true</bool>
+       <bool>false</bool>
       </attribute>
       <attribute name="headerDefaultSectionSize">
        <number>0</number>
@@ -940,7 +940,7 @@ border-radius: 10px
       <rect>
        <x>4</x>
        <y>5</y>
-       <width>351</width>
+       <width>801</width>
        <height>51</height>
       </rect>
      </property>
@@ -951,6 +951,9 @@ color: rgb(86, 96, 162);
      </property>
      <property name="text">
       <string>Projet - RESEAUX - THURAIRAJAH - ABITBOL</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </widget>

@@ -3,10 +3,11 @@ import sys
 # graphique
 from PyQt5.QtWidgets import * 
 from PyQt5.QtGui import * 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 
 from gui.mainWindow import Ui_MainWindow
-
+from gui.splashScreen import Ui_SplashScreen
+import math
 # analyseur
 from traceparser import lectureOctetsG
 from ethernet import trameEthernetG
@@ -23,6 +24,7 @@ class Fenetre:
 
         self.fenetre_princ.setWindowTitle(self.TITRE)
         self.fenetre_princ.setWindowFlag(Qt.FramelessWindowHint)
+        self.fenetre_princ.setAttribute(Qt.WA_TranslucentBackground)
         self.ui.Pages.setCurrentWidget(self.ui.Acceuil)
         # menu du haut
         self.ui.Titre.setText(self.TITRE)
@@ -51,6 +53,7 @@ class Fenetre:
 
         # analyse 
         self.strOut = "ADR-Pro Analyse :\n"
+        self.fname = ""
         self.trame_actuelle = None
         self.ui.bouton_retour_analyse.clicked.connect(self.goToTrame)
         self.ui.bouton_enregistrer.clicked.connect(self.enregistrerTrame)
@@ -97,6 +100,7 @@ class Fenetre:
         if self.ui.liste_trames.selectedItems() != list():
             self.trame_actuelle = self.trames[int(self.ui.liste_trames.selectedItems()[0].text().split()[1])]
             self.ui.table_trame.setItem(1,2,QTableWidgetItem(f"{len(self.trame_actuelle)} byte(s)"))
+            self.ui.bouton_enregistrer.setText("Enregistrer")
             self.ui.Pages.setCurrentWidget(self.ui.Analyse)
             
             # reset de l'arbre
@@ -133,6 +137,7 @@ class Fenetre:
                             self.ui.arbre_trame.topLevelItem(3).addChild(QTreeWidgetItem([info]))   # http
                             self.strOut += info+"\n"
                     else:
+                        self.strOut += liste_info[0]
                         self.ui.arbre_trame.topLevelItem(3).addChild(QTreeWidgetItem([liste_info[0]]))
                 else:
                     info = "??? (seul TCP est implémenté)\n"
@@ -154,14 +159,59 @@ class Fenetre:
 
     def enregistrerTrame(self):
         h = str(hash(self.strOut))
-        with open("output-"+h+".txt", "w") as f:
+        fname = "output-"+h+".txt"
+        with open(fname, "w") as f:
             f.write(self.strOut)
-            
+        self.ui.bouton_enregistrer.setText("Enregistrée 👍")
+
+class SplashScreen(QMainWindow):
+    def __init__(self):
+        QMainWindow.__init__(self)
+        self.ui = Ui_SplashScreen()
+        self.ui.setupUi(self)
+
+        
+        self.counter = 0
+
+        self.setWindowFlag(Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.progress)
+
+        self.timer.start(35)
+
+
+        self.show()
+        ## ==> END ##
+
+    ## ==> APP FUNCTIONS
+    ########################################################################
+    def progress(self):
+
+        # SET VALUE TO PROGRESS BAR
+        self.ui.progressBar.setValue(self.counter)
+
+        # CLOSE SPLASH SCREE AND OPEN APP
+        if self.counter > 100:
+            # STOP TIMER
+            self.timer.stop()
+
+            # SHOW MAIN WINDOW
+            self.main = Fenetre()
+            self.main.show()
+
+            # CLOSE SPLASH SCREEN
+            self.close()
+
+        # INCREASE COUNTER
+        self.counter += 1
 
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    f = Fenetre()
+    f = SplashScreen()
     f.show()
     sys.exit(app.exec_())

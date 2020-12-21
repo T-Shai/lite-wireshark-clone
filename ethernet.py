@@ -9,38 +9,7 @@
 
 """
 
-def formatageMac(mac: list):
-    """
-        formatageMac(list[str]) -> str
-
-        Format les octets en format adresse mac
-    """
-    strMacAdrr =  ":".join(mac)
-    if strMacAdrr.lower() == "ff:ff:ff:ff:ff:ff":
-        strMacAdrr += " (Broadcast)"
-    
-    return strMacAdrr
-
-
-
-def etherType(data: list):
-    """
-        etherType(list[str]) -> str
-
-        retourne les types IPV4, IPV6, ARP ou INCONNU
-    """
-    HexEType = "".join(data)
-    strType = "INCONNU"
-    estIPV4 = False
-    if HexEType.lower() == "0800":
-        strType = "IPV4"
-        estIPV4 = True
-    elif HexEType.lower() == "0806":
-        strType = "ARP REQUEST/RESPONSE"
-    elif HexEType.lower() == "86dd":
-        strType = "IPV6"
-
-    return f"Type Ethernet :\t\t{strType} (0x{HexEType})", estIPV4
+from utils import formatageMac, etherType
 
 
 def trameEthernet(data: list):
